@@ -58,7 +58,7 @@ function showDescription(data){
 }
 
 function validateIfThereIsNextEvolution(data){
-    if(data.chain.evolves_to[0].species.name){
+    if(data.chain.evolves_to[0]){
         const containerEvolution = document.querySelector('.containerEvolution');
         evolutionName = data.chain.evolves_to[0].species.name;  
         containerEvolution.style.display = 'block';
