@@ -3,7 +3,7 @@ const API_URL = 'https://pokeapi.co/api/v2';
 const searchButton = document.querySelector('.buttonSearch');
 const inputTag = document.getElementById('in1');
 const buttonEvolution = document.querySelector('.buttonEvolution');
-let evolutionName;
+let evolutionName, currentName;
 
 
 async function readData(url){
@@ -60,8 +60,16 @@ function showDescription(data){
 function validateIfThereIsNextEvolution(data){
     if(data.chain.evolves_to[0]){
         const containerEvolution = document.querySelector('.containerEvolution');
-        evolutionName = data.chain.evolves_to[0].species.name;  
-        containerEvolution.style.display = 'block';
+        console.log(currentName);
+        if(currentName === data.chain.evolves_to[0].species.name){
+            if(data.chain.evolves_to[0].evolves_to[0]){
+                evolutionName = data.chain.evolves_to[0].evolves_to[0].species.name;
+                containerEvolution.style.display = 'block';  
+            }
+        }else{
+            evolutionName = data.chain.evolves_to[0].species.name;  
+            containerEvolution.style.display = 'block';
+        }
     }
 }
 
@@ -70,8 +78,11 @@ searchButton.addEventListener("click",
     (event)=>{
         event.preventDefault();
         if(inputTag.value){
-            readData(`${API_URL}/pokemon/${inputTag.value.toLowerCase ()}`)
-                .then(data => showMainInfo(data))
+            readData(`${API_URL}/pokemon/${inputTag.value.toLowerCase()}`)
+                .then(data => {
+                    currentName = inputTag.value.toLowerCase();
+                    showMainInfo(data)
+                })
                 .catch(error => console.log('Failed fetch the data ',error));
         }
     }
@@ -81,7 +92,10 @@ buttonEvolution.addEventListener("click",
     (event)=>{
         event.preventDefault();
         readData(`${API_URL}/pokemon/${evolutionName}`)
-                    .then(data => showMainInfo(data))
+                    .then(data => {
+                        currentName = evolutionName;
+                        showMainInfo(data)
+                    })
                     .catch(error => console.log('Failed fetch the data ',error));
     }
 )
